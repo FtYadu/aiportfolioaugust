@@ -10,27 +10,30 @@ export default function CVPage() {
           Curriculum Vitae
         </h1>
         <p className="mt-4 text-lg text-neutral-300 max-w-2xl mx-auto">
-          Here is a detailed overview of my skills, experience, and qualifications. Download for your reference.
+          Here is a detailed overview of my skills, experience, and qualifications. Click the preview to download.
         </p>
       </div>
 
-      <div className="w-full max-w-4xl p-4 md:p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
-        <div className="aspect-[8.5/11] w-full">
+      <a 
+        href="/Yadu Krishnan - Multimedia Specialist -01_12_2025-3.pdf" 
+        download="Yadu_Krishnan_CV.pdf"
+        className="w-full max-w-4xl p-4 md:p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl group cursor-pointer"
+      >
+        <div className="aspect-[8.5/11] w-full relative">
           <iframe
             src="/Yadu Krishnan - Multimedia Specialist -01_12_2025-3.pdf"
             title="Yadu Krishnan CV"
             className="w-full h-full rounded-lg border-2 border-white/20"
           />
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="flex items-center text-white text-lg font-semibold bg-black/70 px-6 py-3 rounded-lg">
+                <Download className="mr-2 h-5 w-5" />
+                Download CV
+            </div>
+          </div>
         </div>
-      </div>
-      
-      <a href="/Yadu Krishnan - Multimedia Specialist -01_12_2025-3.pdf" download="Yadu_Krishnan_CV.pdf" className="mt-8">
-        <Button size="lg">
-          <Download className="mr-2 h-5 w-5" />
-          Download CV
-        </Button>
       </a>
-
+      
       <div className="text-center mt-16">
         <h2 className="text-3xl font-bold font-headline mb-4">Ready to take the next step?</h2>
         <p className="text-neutral-300 mb-8 max-w-2xl mx-auto">If my qualifications align with your needs, I would be delighted to discuss potential opportunities.</p>
