@@ -20,11 +20,13 @@ export default function PortfolioPage() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const processAllItems = async () => {
+    const processInBatches = async () => {
       setTaggingInProgress(true);
       const itemsToTag = taggedItems.filter(item => !item.tags || item.tags.length === 0);
       const totalToTag = itemsToTag.length;
       let taggedCount = 0;
+      const batchSize = 50;
+      const delay = 1000; // 1 second cooldown
 
       if (totalToTag === 0) {
         setTaggingInProgress(false);
@@ -35,28 +37,34 @@ export default function PortfolioPage() {
       const updatedItems = [...taggedItems];
       let needsUpdate = false;
 
-      for (const item of itemsToTag) {
-        try {
-          const imageDataUri = await urlToDataUri(item.thumbnail);
-          const { tags } = await tagImage({ imageDataUri });
-          
-          const itemIndex = updatedItems.findIndex(i => i.id === item.id);
-          if (itemIndex !== -1) {
-            updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags };
-            needsUpdate = true;
+      for (let i = 0; i < totalToTag; i += batchSize) {
+        const batch = itemsToTag.slice(i, i + batchSize);
+        await Promise.all(batch.map(async (item) => {
+          try {
+            const imageDataUri = await urlToDataUri(item.thumbnail);
+            const { tags } = await tagImage({ imageDataUri });
+            
+            const itemIndex = updatedItems.findIndex(p => p.id === item.id);
+            if (itemIndex !== -1) {
+              updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags };
+              needsUpdate = true;
+            }
+          } catch (error) {
+            console.error(`Failed to tag item ${item.id}:`, error);
+            const itemIndex = updatedItems.findIndex(p => p.id === item.id);
+            if (itemIndex !== -1) {
+               updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags: [updatedItems[itemIndex].category] };
+            }
           }
+          taggedCount++;
+          setProgress((taggedCount / totalToTag) * 100);
+        }));
 
-          setTaggedItems([...updatedItems]);
-        } catch (error) {
-          console.error(`Failed to tag item ${item.id}:`, error);
-          const itemIndex = updatedItems.findIndex(i => i.id === item.id);
-          if (itemIndex !== -1) {
-             updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags: [updatedItems[itemIndex].category] };
-          }
-          setTaggedItems([...updatedItems]);
+        setTaggedItems([...updatedItems]);
+        
+        if (i + batchSize < totalToTag) {
+          await new Promise(resolve => setTimeout(resolve, delay));
         }
-        taggedCount++;
-        setProgress((taggedCount / totalToTag) * 100);
       }
 
       if (needsUpdate) {
@@ -66,13 +74,13 @@ export default function PortfolioPage() {
       setTaggingInProgress(false);
     };
 
-    processAllItems();
+    processInBatches();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const allFilteredItems = useMemo(() => {
     if (filter === 'All') return taggedItems;
-    if (filter === 'Photography' || filter === 'Videography') {
+    if (GENERAL_CATEGORIES.slice(1, 3).includes(filter)) { // Photography or Videography
       return taggedItems.filter(item => item.category === filter);
     }
     return taggedItems.filter(item =>
