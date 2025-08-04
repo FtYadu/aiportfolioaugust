@@ -3,6 +3,8 @@ import { Download, ArrowRight } from "lucide-react";
 import Link from 'next/link';
 
 export default function CVPage() {
+  const cvLink = "https://scanned.page/p/CH0smg";
+
   return (
     <main className="container mx-auto px-4 py-24 min-h-screen flex flex-col items-center">
       <div className="text-center mb-12">
@@ -15,13 +17,15 @@ export default function CVPage() {
       </div>
 
       <a 
-        href="/Yadu Krishnan - Multimedia Specialist -01_12_2025-3.pdf" 
+        href={cvLink}
+        target="_blank"
+        rel="noopener noreferrer"
         download="Yadu_Krishnan_CV.pdf"
         className="w-full max-w-4xl p-4 md:p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl group cursor-pointer"
       >
         <div className="aspect-[8.5/11] w-full relative">
           <iframe
-            src="/Yadu Krishnan - Multimedia Specialist -01_12_2025-3.pdf"
+            src={cvLink}
             title="Yadu Krishnan CV"
             className="w-full h-full rounded-lg border-2 border-white/20"
           />
