@@ -8,9 +8,8 @@ import path from 'path';
 export const getCvData = cache(
   async (): Promise<ParseCvOutput> => {
     try {
-      const filePath = path.join(
-        process.cwd(),
-        'public',
+      const filePath = path.resolve(
+        './public',
         'Yadu Krishnan - Multimedia Specialist -01_12_2025-3.pdf'
       );
       const fileBuffer = await fs.readFile(filePath);
