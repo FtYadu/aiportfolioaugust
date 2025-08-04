@@ -56,7 +56,7 @@ export default function Home() {
       header: (
         <div className="grid grid-cols-2 grid-rows-2 gap-2 p-2 h-full">
             {featuredPortfolio.map((item, i) => (
-                <Image key={i} src={item.thumbnail} alt={item.title} width={200} height={200} className="object-cover rounded-md w-full h-full" />
+                <Image key={i} src={item.thumbnail} alt={item.title} width={200} height={200} className="object-cover rounded-md w-full h-full" data-ai-hint={item.description} />
             ))}
         </div>
       ),
