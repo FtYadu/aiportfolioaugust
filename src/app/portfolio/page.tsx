@@ -7,19 +7,9 @@ import MediaLightbox from '@/components/MediaLightbox';
 import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
 import { tagImage } from '@/ai/flows/tag-image';
+import { urlToDataUri } from '@/lib/server-utils';
 
 const ITEMS_PER_PAGE = 12;
-
-async function urlToDataUri(url: string): Promise<string> {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-}
 
 export default function PortfolioPage() {
   const [filter, setFilter] = useState('All');
