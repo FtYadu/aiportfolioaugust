@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import FloatingNav from '@/components/layout/FloatingNav';
-import { Home, Briefcase, Rss, Handshake, Mail, Download } from 'lucide-react';
+import { Home, Briefcase, Rss, Handshake, Mail, Download, Bot } from 'lucide-react';
 import Template from './template';
 
 export const metadata: Metadata = {
@@ -18,6 +18,7 @@ export default function RootLayout({
   const navItems = [
     { name: "Home", link: "/", icon: <Home className="h-4 w-4" /> },
     { name: "Portfolio", link: "/portfolio", icon: <Briefcase className="h-4 w-4" /> },
+    { name: "AI Lab", link: "/ai-lab", icon: <Bot className="h-4 w-4" /> },
     { name: "Blog", link: "/blog", icon: <Rss className="h-4 w-4" /> },
     { name: "Services", link: "/services", icon: <Handshake className="h-4 w-4" /> },
     { name: "CV", link: "/cv", icon: <Download className="h-4 w-4" /> },
