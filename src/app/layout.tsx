@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import FloatingNav from '@/components/layout/FloatingNav';
 import { Home, Briefcase, Bot, Handshake, Mail, Download, Rss } from 'lucide-react';
 import Template from './template';
+import WelcomeIntro from '@/components/WelcomeIntro';
 
 export const metadata: Metadata = {
   title: 'Yadu Krishnan | Multimedia Specialist',
@@ -33,6 +34,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
+        <WelcomeIntro />
         <FloatingNav navItems={navItems} />
         <Template>{children}</Template>
         <Toaster />
