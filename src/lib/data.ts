@@ -43,7 +43,6 @@ export const portfolioItems: PortfolioItem[] = projectData.filter(isProjectData)
     category: item.Category as 'Photography' | 'Videography' | 'AI Art',
     thumbnail: item['Cover Image'],
     mediaUrl: item['Cover Image'],
-    // Pass other fields from JSON
     Name: item.Name,
     'Cover Image': item['Cover Image'],
     Status: item.Status,
@@ -51,7 +50,6 @@ export const portfolioItems: PortfolioItem[] = projectData.filter(isProjectData)
     Budget: item.Budget,
     'Start Date': item['Start Date'],
     'End Date': item['End Date'],
-    // Include existing tags if they exist in the JSON
     tags: item.tags || [],
 }));
 

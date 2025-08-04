@@ -13,6 +13,7 @@ export default function WelcomeIntro() {
   const buttonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // This check must be inside useEffect to run only on the client
     const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
     if (!hasSeenIntro) {
       setIsVisible(true);

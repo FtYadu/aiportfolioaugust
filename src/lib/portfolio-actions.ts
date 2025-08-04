@@ -11,7 +11,10 @@ export async function updatePortfolioData(
     const filePath = path.join(process.cwd(), 'Yadu_Projects_Database.json');
     
     // Reconstruct the JSON data in its original format before writing
-    const dataToWrite = updatedItems.map(item => ({
+    const dataToWrite = updatedItems.map(item => {
+      // Create a copy of the item and remove properties that are not in the original JSON
+      const { id, thumbnail, mediaUrl, title, ...rest } = item;
+      return {
         Name: item.Name,
         Status: item.Status,
         Category: item.category,
@@ -22,9 +25,10 @@ export async function updatePortfolioData(
         'Cover Image': item['Cover Image'],
         Description: item.description,
         tags: item.tags || [],
-    }));
+      };
+    });
 
-    await fs.writeFile(filePath, JSON.stringify(dataToWrite, null, 2), 'utf8');
+    await fs.writeFile(filePath, JSON.stringify(dataToWrite, null, 4), 'utf8');
     
     return { success: true };
   } catch (error) {

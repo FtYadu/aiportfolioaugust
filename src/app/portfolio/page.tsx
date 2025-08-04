@@ -131,6 +131,12 @@ export default function PortfolioPage() {
           ))}
         </BentoGrid>
 
+        {allFilteredItems.length === 0 && (
+          <div className="text-center mt-20">
+            <p className="text-neutral-400">No items found for this category.</p>
+          </div>
+        )}
+
         {allFilteredItems.length > 0 && (
           <div className="text-center mt-20">
             <h2 className="text-3xl font-bold font-headline mb-4">Like what you see?</h2>
