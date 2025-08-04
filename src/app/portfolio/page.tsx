@@ -15,78 +15,78 @@ const GENERAL_CATEGORIES = ['All', 'Photography', 'Videography', 'Portraits', 'A
 export default function PortfolioPage() {
   const [filter, setFilter] = useState('All');
   const [selectedItem, setSelectedItem] = useState<PortfolioItemType | null>(null);
-  const [taggedItems, setTaggedItems] = useState<PortfolioItemType[]>(portfolioItems);
+  const [items, setItems] = useState<PortfolioItemType[]>(portfolioItems);
   const [taggingInProgress, setTaggingInProgress] = useState(true);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const processInBatches = async () => {
+    const processTags = async () => {
       setTaggingInProgress(true);
-      const itemsToTag = taggedItems.filter(item => !item.tags || item.tags.length === 0);
+      const itemsToTag = items.filter(item => !item.tags || item.tags.length === 0);
       const totalToTag = itemsToTag.length;
       let taggedCount = 0;
-      const batchSize = 50;
-      const delay = 1000; // 1 second cooldown
-
-      if (totalToTag === 0) {
-        setTaggingInProgress(false);
-        setProgress(100);
-        return;
-      }
       
-      const updatedItems = [...taggedItems];
+      if (totalToTag === 0) {
+          setTaggingInProgress(false);
+          setProgress(100);
+          return;
+      }
+
       let needsUpdate = false;
 
-      for (let i = 0; i < totalToTag; i += batchSize) {
-        const batch = itemsToTag.slice(i, i + batchSize);
-        await Promise.all(batch.map(async (item) => {
-          try {
+      for (const item of itemsToTag) {
+        try {
             const imageDataUri = await urlToDataUri(item.thumbnail);
             const { tags } = await tagImage({ imageDataUri });
             
-            const itemIndex = updatedItems.findIndex(p => p.id === item.id);
-            if (itemIndex !== -1) {
-              updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags };
-              needsUpdate = true;
-            }
-          } catch (error) {
+            setItems(currentItems => {
+                const updatedItems = [...currentItems];
+                const itemIndex = updatedItems.findIndex(p => p.id === item.id);
+                if (itemIndex !== -1) {
+                    updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags };
+                    needsUpdate = true;
+                }
+                return updatedItems;
+            });
+        } catch (error) {
             console.error(`Failed to tag item ${item.id}:`, error);
-            const itemIndex = updatedItems.findIndex(p => p.id === item.id);
-            if (itemIndex !== -1) {
-               updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags: [updatedItems[itemIndex].category] };
-            }
-          }
-          taggedCount++;
-          setProgress((taggedCount / totalToTag) * 100);
-        }));
-
-        setTaggedItems([...updatedItems]);
-        
-        if (i + batchSize < totalToTag) {
-          await new Promise(resolve => setTimeout(resolve, delay));
+             setItems(currentItems => {
+                const updatedItems = [...currentItems];
+                const itemIndex = updatedItems.findIndex(p => p.id === item.id);
+                if (itemIndex !== -1) {
+                   updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags: [updatedItems[itemIndex].category] };
+                }
+                return updatedItems;
+            });
         }
+        taggedCount++;
+        setProgress((taggedCount / totalToTag) * 100);
       }
 
       if (needsUpdate) {
-        await updatePortfolioData(updatedItems);
+        // Since setItems is async, we grab the latest state to update the file
+        setItems(currentItems => {
+          updatePortfolioData(currentItems);
+          return currentItems;
+        });
       }
 
       setTaggingInProgress(false);
     };
 
-    processInBatches();
+    processTags();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const allFilteredItems = useMemo(() => {
-    if (filter === 'All') return taggedItems;
+    if (filter === 'All') return items;
     if (GENERAL_CATEGORIES.slice(1, 3).includes(filter)) { // Photography or Videography
-      return taggedItems.filter(item => item.category === filter);
+      return items.filter(item => item.category === filter);
     }
-    return taggedItems.filter(item =>
+    return items.filter(item =>
       item.tags?.some(tag => tag.toLowerCase().includes(filter.toLowerCase()))
     );
-  }, [filter, taggedItems]);
+  }, [filter, items]);
 
   return (
     <>

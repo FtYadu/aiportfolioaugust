@@ -24,7 +24,19 @@ export interface PortfolioItem {
   'End Date': string;
 }
 
-export const portfolioItems: PortfolioItem[] = projectData.map((item, index) => ({
+// Type guard to ensure item structure
+function isProjectData(item: any): item is Omit<PortfolioItem, 'id' | 'tags' | 'thumbnail' | 'mediaUrl' | 'title' | 'description'> & { Name: string; Description: string; Category: string; 'Cover Image': string, tags?: string[] } {
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    'Name' in item &&
+    'Description' in item &&
+    'Category' in item &&
+    'Cover Image' in item
+  );
+}
+
+export const portfolioItems: PortfolioItem[] = projectData.filter(isProjectData).map((item, index) => ({
     id: index + 1,
     title: item.Name,
     description: item.Description,
@@ -40,7 +52,7 @@ export const portfolioItems: PortfolioItem[] = projectData.map((item, index) => 
     'Start Date': item['Start Date'],
     'End Date': item['End Date'],
     // Include existing tags if they exist in the JSON
-    tags: (item as any).tags || [],
+    tags: item.tags || [],
 }));
 
 

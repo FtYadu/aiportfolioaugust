@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import FloatingNav from '@/components/layout/FloatingNav';
 import { Home, Briefcase, Rss, Handshake, Mail, Download } from 'lucide-react';
+import Template from './template';
 
 export const metadata: Metadata = {
   title: 'Yadu Krishnan | Multimedia Specialist',
@@ -32,7 +33,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <FloatingNav navItems={navItems} />
-        {children}
+        <Template>{children}</Template>
         <Toaster />
       </body>
     </html>
