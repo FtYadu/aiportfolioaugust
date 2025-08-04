@@ -14,7 +14,7 @@ export interface PortfolioItem {
   category: 'Photography' | 'Videography' | 'AI Art';
   thumbnail: string;
   mediaUrl: string;
-  tags: string[];
+  tags?: string[];
   Name: string;
   'Cover Image': string;
   Status: string;

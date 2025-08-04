@@ -1,9 +1,10 @@
-// This is a new file
 'use client';
 import React from 'react';
+import { gsap } from 'gsap';
 
-const AnimatedLogo = (props: React.SVGProps<SVGSVGElement>) => (
+const AnimatedLogo = React.forwardRef<SVGSVGElement, React.SVGProps<SVGSVGElement>>((props, ref) => (
   <svg
+    ref={ref}
     viewBox="0 0 100 100"
     width="100"
     height="100"
@@ -22,6 +23,7 @@ const AnimatedLogo = (props: React.SVGProps<SVGSVGElement>) => (
       d="M 50,10 L 90,90 L 10,90 Z" // Initial shape: Triangle
     />
   </svg>
-);
+));
 
+AnimatedLogo.displayName = "AnimatedLogo";
 export default AnimatedLogo;

@@ -1,7 +1,6 @@
 
 'use client';
 import React from 'react';
-import Link from 'next/link';
 import { getCvData } from '@/lib/cv';
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +10,7 @@ import { portfolioItems } from '@/lib/data';
 import Image from 'next/image';
 import SocialScroller from '@/components/SocialScroller';
 import type { ParseCvOutput } from '@/ai/flows/cv-parsing';
+import Link from 'next/link';
 
 export default function Home() {
   const [cvData, setCvData] = React.useState<ParseCvOutput | null>(null);
@@ -85,7 +85,7 @@ export default function Home() {
         <h1 className="text-4xl md:text-6xl font-bold font-headline bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
           Yadu Krishnan
         </h1>
-        <p className="mt-4 text-lg text-neutral-300">
+        <p className="mt-4 text-lg text-neutral-300 max-w-3xl mx-auto">
           Multimedia Specialist & Creative Technologist
         </p>
       </div>

@@ -36,7 +36,6 @@ export default function PortfolioPage() {
       for (let i = 0; i < itemsToTag.length; i += BATCH_SIZE) {
         const batch = itemsToTag.slice(i, i + BATCH_SIZE);
         
-        // Mark items as being tagged
         setTaggingInProgress(prev => {
             const newSet = new Set(prev);
             batch.forEach(item => newSet.add(item.id));
@@ -81,8 +80,11 @@ export default function PortfolioPage() {
       }
     };
 
-    processTags();
-  }, [items]);
+    const hasPreviouslyUntaggedItems = items.some(item => !item.tags || item.tags.length === 0);
+    if(hasPreviouslyUntaggedItems) {
+      processTags();
+    }
+  }, []);
 
   useEffect(() => {
     const hasUntaggedItems = items.some(item => !item.tags || item.tags.length === 0);
@@ -108,7 +110,7 @@ export default function PortfolioPage() {
           <h1 className="text-4xl md:text-6xl font-bold font-headline bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
             Portfolio
           </h1>
-          <p className="mt-4 text-lg text-neutral-300 max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-neutral-300 max-w-3xl mx-auto">
             A curated collection of my work in photography, videography, and AI-driven art. Each project is a story told through pixels and light.
           </p>
         </div>

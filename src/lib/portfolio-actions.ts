@@ -13,17 +13,17 @@ export async function updatePortfolioData(
     // Reconstruct the JSON data in its original format before writing
     const dataToWrite = updatedItems.map(item => {
       // Create a copy of the item and remove properties that are not in the original JSON
-      const { id, thumbnail, mediaUrl, title, description, category, ...rest } = item;
+      const { id, thumbnail, mediaUrl, title, description, category, tags, ...rest } = item;
       return {
         ...rest,
-        Category: category,
+        Name: title,
         Description: description,
-        // Ensure tags is an array, even if empty
-        tags: Array.isArray(item.tags) ? item.tags : [],
+        Category: category,
+        tags: Array.isArray(tags) ? tags : [],
       };
     });
 
-    await fs.writeFile(filePath, JSON.stringify(dataToWrite, null, 4), 'utf8');
+    await fs.writeFile(filePath, JSON.stringify(dataToWrite, null, 2), 'utf8');
     
     return { success: true };
   } catch (error) {

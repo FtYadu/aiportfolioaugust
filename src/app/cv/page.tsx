@@ -6,12 +6,12 @@ export default function CVPage() {
   const cvLink = "https://scanned.page/p/CH0smg";
 
   return (
-    <main className="container mx-auto px-4 py-24 min-h-screen flex flex-col items-center">
+    <main className="container mx-auto px-4 py-24 min-h-screen">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-6xl font-bold font-headline bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
           Curriculum Vitae
         </h1>
-        <p className="mt-4 text-lg text-neutral-300 max-w-2xl mx-auto">
+        <p className="mt-4 text-lg text-neutral-300 max-w-3xl mx-auto">
           Here is a detailed overview of my skills, experience, and qualifications. Click the preview to download.
         </p>
       </div>
@@ -21,7 +21,7 @@ export default function CVPage() {
         target="_blank"
         rel="noopener noreferrer"
         download="Yadu_Krishnan_CV.pdf"
-        className="w-full max-w-4xl p-4 md:p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl group cursor-pointer"
+        className="w-full max-w-4xl mx-auto p-4 md:p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl group cursor-pointer"
       >
         <div className="aspect-[8.5/11] w-full relative">
           <iframe

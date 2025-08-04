@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { posts, Post } from '@/lib/blog-data';
+import { posts } from '@/lib/blog-data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
@@ -14,7 +14,7 @@ export default function BlogPage() {
         <h1 className="text-4xl md:text-6xl font-bold font-headline bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
           From the Field
         </h1>
-        <p className="mt-4 text-lg text-neutral-300 max-w-2xl mx-auto">
+        <p className="mt-4 text-lg text-neutral-300 max-w-3xl mx-auto">
           Insights on creative technology, multimedia, and the art of visual storytelling.
         </p>
       </div>

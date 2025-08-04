@@ -16,12 +16,12 @@ export default function ServicesPage() {
         <h1 className="text-4xl md:text-6xl font-bold font-headline bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
           Services
         </h1>
-        <p className="mt-4 text-lg text-neutral-300 max-w-2xl mx-auto">
+        <p className="mt-4 text-lg text-neutral-300 max-w-3xl mx-auto">
           Leveraging creativity and technology to bring your ideas to life. Explore my professional services tailored to meet your multimedia needs.
         </p>
       </div>
 
-      <BentoGrid className="mx-auto md:w-full">
+      <BentoGrid className="mx-auto md:w-full" autoRows>
         {services.map((service, i) => (
           <BentoGridItem
             key={i}
@@ -47,7 +47,7 @@ export default function ServicesPage() {
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold font-headline">Have a Project in Mind?</h2>
-            <p className="mt-2 text-neutral-300">Fill out the form below to get in touch. I'll get back to you as soon as possible.</p>
+            <p className="mt-2 text-neutral-300 max-w-3xl mx-auto">Fill out the form below to get in touch. I'll get back to you as soon as possible.</p>
           </div>
           <ContactForm />
         </div>
