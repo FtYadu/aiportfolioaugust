@@ -1,10 +1,13 @@
 'use server';
 
 export async function urlToDataUri(url: string): Promise<string> {
+  if (!url) {
+     return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+  }
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { cache: 'force-cache' });
     if (!response.ok) {
-      throw new Error(`Failed to fetch image: ${response.statusText}`);
+      throw new Error(`Failed to fetch image: ${response.statusText} for URL: ${url}`);
     }
     const blob = await response.blob();
     const buffer = Buffer.from(await blob.arrayBuffer());

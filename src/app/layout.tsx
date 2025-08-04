@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import FloatingNav from '@/components/layout/FloatingNav';
-import { Home, Briefcase, Bot, Handshake, Mail, Download } from 'lucide-react';
+import { Home, Briefcase, Bot, Handshake, Mail, Download, Rss } from 'lucide-react';
 import Template from './template';
 
 export const metadata: Metadata = {

@@ -8,7 +8,7 @@ export async function updatePortfolioData(
   updatedItems: PortfolioItem[]
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const filePath = path.resolve(process.cwd(), 'Yadu_Projects_Database.json');
+    const filePath = path.join(process.cwd(), 'Yadu_Projects_Database.json');
     
     // Reconstruct the JSON data in its original format before writing
     const dataToWrite = updatedItems.map(item => ({
@@ -24,7 +24,7 @@ export async function updatePortfolioData(
         tags: item.tags || [],
     }));
 
-    await fs.writeFile(filePath, JSON.stringify(dataToWrite, null, 4), 'utf8');
+    await fs.writeFile(filePath, JSON.stringify(dataToWrite, null, 2), 'utf8');
     
     return { success: true };
   } catch (error) {

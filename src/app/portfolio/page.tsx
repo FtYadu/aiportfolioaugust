@@ -18,19 +18,12 @@ export default function PortfolioPage() {
   const [filter, setFilter] = useState('All');
   const [selectedItem, setSelectedItem] = useState<PortfolioItemType | null>(null);
   const [items, setItems] = useState<PortfolioItemType[]>(portfolioItems);
-  const [taggingInProgress, setTaggingInProgress] = useState(true);
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const processTags = async () => {
-      setTaggingInProgress(true);
       const itemsToTag = items.filter(item => !item.tags || item.tags.length === 0);
-      const totalToTag = itemsToTag.length;
-      let taggedCount = 0;
       
-      if (totalToTag === 0) {
-          setTaggingInProgress(false);
-          setProgress(100);
+      if (itemsToTag.length === 0) {
           return;
       }
 
@@ -65,8 +58,6 @@ export default function PortfolioPage() {
                     return updatedItems;
                 });
             }
-            taggedCount++;
-            setProgress((taggedCount / totalToTag) * 100);
         }));
 
         if (i + BATCH_SIZE < itemsToTag.length) {
@@ -81,8 +72,6 @@ export default function PortfolioPage() {
           return currentItems;
         });
       }
-
-      setTaggingInProgress(false);
     };
 
     processTags();
@@ -127,21 +116,22 @@ export default function PortfolioPage() {
               key={`${item.id}-${i}`}
               title={item.title}
               description={item.description}
-              header={<Image src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" width={600} height={400} data-ai-hint={item.description}/>}
+              header={
+                (!item.tags || item.tags.length === 0) ? (
+                  <div className="w-full h-full flex items-center justify-center bg-card">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : (
+                  <Image src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" width={600} height={400} data-ai-hint={item.description}/>
+                )
+              }
               className={i % 6 === 0 || i % 6 === 4 ? 'md:col-span-2' : ''}
               onClick={() => setSelectedItem(item)}
             />
           ))}
         </BentoGrid>
 
-        {taggingInProgress && (
-          <div className="text-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-            <p className="text-neutral-400 mt-2">Analyzing and loading portfolio ({Math.round(progress)}%)...</p>
-          </div>
-        )}
-
-        {!taggingInProgress && allFilteredItems.length > 0 && (
+        {allFilteredItems.length > 0 && (
           <div className="text-center mt-20">
             <h2 className="text-3xl font-bold font-headline mb-4">Like what you see?</h2>
             <p className="text-neutral-300 mb-8 max-w-2xl mx-auto">Let's work together to bring your vision to life. I'm ready to discuss your project.</p>
