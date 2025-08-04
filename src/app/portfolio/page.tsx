@@ -1,15 +1,12 @@
 
 'use client';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
 import { portfolioItems, PortfolioItem as PortfolioItemType } from '@/lib/data';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MediaLightbox from '@/components/MediaLightbox';
 import Image from 'next/image';
-import { Loader2, ArrowRight } from 'lucide-react';
-import { tagImage } from '@/ai/flows/tag-image';
-import { urlToDataUri } from '@/lib/server-utils';
-import { updatePortfolioData } from '@/lib/portfolio-actions';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -18,90 +15,16 @@ const GENERAL_CATEGORIES = ['All', 'Photography', 'Videography', 'Portraits', 'A
 export default function PortfolioPage() {
   const [filter, setFilter] = useState('All');
   const [selectedItem, setSelectedItem] = useState<PortfolioItemType | null>(null);
-  const [items, setItems] = useState<PortfolioItemType[]>(portfolioItems);
-  const [taggingInProgress, setTaggingInProgress] = useState<Set<number>>(new Set());
-
-
-  useEffect(() => {
-    const processTags = async () => {
-      const itemsToTag = items.filter(item => !item.tags || item.tags.length === 0);
-      
-      if (itemsToTag.length === 0) {
-          return;
-      }
-      
-      const BATCH_SIZE = 5;
-      const DELAY_BETWEEN_BATCHES = 5000;
-
-      for (let i = 0; i < itemsToTag.length; i += BATCH_SIZE) {
-        const batch = itemsToTag.slice(i, i + BATCH_SIZE);
-        
-        setTaggingInProgress(prev => {
-            const newSet = new Set(prev);
-            batch.forEach(item => newSet.add(item.id));
-            return newSet;
-        });
-
-        await Promise.all(batch.map(async (item) => {
-            try {
-                const imageDataUri = await urlToDataUri(item.thumbnail);
-                const { tags } = await tagImage({ imageDataUri });
-                
-                setItems(currentItems => {
-                    const newItems = [...currentItems];
-                    const itemIndex = newItems.findIndex(p => p.id === item.id);
-                    if (itemIndex !== -1) {
-                        newItems[itemIndex] = { ...newItems[itemIndex], tags };
-                    }
-                    return newItems;
-                });
-            } catch (error) {
-                console.error(`Failed to tag item ${item.id}:`, error);
-                setItems(currentItems => {
-                    const newItems = [...currentItems];
-                    const itemIndex = newItems.findIndex(p => p.id === item.id);
-                    if (itemIndex !== -1) {
-                       newItems[itemIndex] = { ...newItems[itemIndex], tags: [newItems[itemIndex].category] };
-                    }
-                    return newItems;
-                });
-            } finally {
-                setTaggingInProgress(prev => {
-                    const newSet = new Set(prev);
-                    newSet.delete(item.id);
-                    return newSet;
-                });
-            }
-        }));
-
-        if (i + BATCH_SIZE < itemsToTag.length) {
-            await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
-        }
-      }
-    };
-
-    const hasPreviouslyUntaggedItems = items.some(item => !item.tags || item.tags.length === 0);
-    if(hasPreviouslyUntaggedItems) {
-      processTags();
-    }
-  }, []);
-
-  useEffect(() => {
-    const hasUntaggedItems = items.some(item => !item.tags || item.tags.length === 0);
-    if (!hasUntaggedItems) {
-      updatePortfolioData(items);
-    }
-  }, [items]);
 
   const allFilteredItems = useMemo(() => {
-    if (filter === 'All') return items;
+    if (filter === 'All') return portfolioItems;
     if (GENERAL_CATEGORIES.slice(1, 3).includes(filter)) { // Photography or Videography
-      return items.filter(item => item.category === filter);
+      return portfolioItems.filter(item => item.category === filter);
     }
-    return items.filter(item =>
+    return portfolioItems.filter(item =>
       item.tags?.some(tag => tag.toLowerCase().includes(filter.toLowerCase()))
     );
-  }, [filter, items]);
+  }, [filter]);
 
   return (
     <>
@@ -132,13 +55,7 @@ export default function PortfolioPage() {
               title={item.title}
               description={item.description}
               header={
-                taggingInProgress.has(item.id) ? (
-                  <div className="w-full h-full flex items-center justify-center bg-card">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  </div>
-                ) : (
-                  <Image src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" width={600} height={400} data-ai-hint={item.description} />
-                )
+                <Image src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" width={600} height={400} data-ai-hint={item.description} />
               }
               className={i % 6 === 0 || i % 6 === 4 ? 'md:col-span-2' : ''}
               onClick={() => setSelectedItem(item)}

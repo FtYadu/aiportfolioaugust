@@ -5,54 +5,82 @@ import PinterestIcon from '@/components/icons/PinterestIcon';
 import SpotifyIcon from '@/components/icons/SpotifyIcon';
 import ThreadsIcon from '@/components/icons/ThreadsIcon';
 import TikTokIcon from '@/components/icons/TikTokIcon';
-import projectData from '@/../Yadu_Projects_Database.json';
 
 export interface PortfolioItem {
   id: number;
   title: string;
   description: string;
-  category: 'Photography' | 'Videography' | 'AI Art';
+  category: 'Photography' | 'Videography';
   thumbnail: string;
   mediaUrl: string;
-  tags?: string[];
-  Name: string;
-  'Cover Image': string;
-  Status: string;
-  Client: string;
-  Budget: string;
-  'Start Date': string;
-  'End Date': string;
+  tags: string[];
 }
 
-// Type guard to ensure item structure
-function isProjectData(item: any): item is Omit<PortfolioItem, 'id' | 'thumbnail' | 'mediaUrl' | 'title' | 'description' | 'tags'> & { Name: string; Description: string; Category: string; 'Cover Image': string, tags?: string[] } {
-  return (
-    typeof item === 'object' &&
-    item !== null &&
-    'Name' in item &&
-    'Description' in item &&
-    'Category' in item &&
-    'Cover Image' in item
-  );
-}
-
-export const portfolioItems: PortfolioItem[] = projectData.filter(isProjectData).map((item, index) => ({
-    id: index + 1,
-    title: item.Name,
-    description: item.Description,
-    category: item.Category as 'Photography' | 'Videography' | 'AI Art',
-    thumbnail: item['Cover Image'],
-    mediaUrl: item['Cover Image'],
-    tags: Array.isArray(item.tags) ? item.tags : [],
-    Name: item.Name,
-    'Cover Image': item['Cover Image'],
-    Status: item.Status,
-    Client: item.Client,
-    Budget: item.Budget,
-    'Start Date': item['Start Date'],
-    'End Date': item['End Date'],
-}));
-
+export const portfolioItems: PortfolioItem[] = [
+    {
+        "id": 1,
+        "title": "Industrial Worker",
+        "description": "a man in a blue coverall suit and helmet",
+        "category": "Photography",
+        "thumbnail": "https://lh3.googleusercontent.com/d/12f3g8Ra9ioHT9Grptg_LtwMC_K7D0vUc",
+        "mediaUrl": "https://lh3.googleusercontent.com/d/12f3g8Ra9ioHT9Grptg_LtwMC_K7D0vUc",
+        "tags": ["industrial", "portrait"]
+    },
+    {
+        "id": 2,
+        "title": "Coffee Break",
+        "description": "a woman sitting at a table with a cup of coffee",
+        "category": "Photography",
+        "thumbnail": "https://lh3.googleusercontent.com/d/16ZL63UuU4z4Dc1LEgrFNMdTgRteVSbbP",
+        "mediaUrl": "https://lh3.googleusercontent.com/d/16ZL63UuU4z4Dc1LEgrFNMdTgRteVSbbP",
+        "tags": ["portrait", "lifestyle"]
+    },
+    {
+        "id": 3,
+        "title": "Family Moment",
+        "description": "a man and a little girl sitting on a table",
+        "category": "Photography",
+        "thumbnail": "https://lh3.googleusercontent.com/d/1T7YuukIG6iM--i9UHUHM7aQFQ2IMET6e",
+        "mediaUrl": "https://lh3.googleusercontent.com/d/1T7YuukIG6iM--i9UHUHM7aQFQ2IMET6e",
+        "tags": ["family", "portrait"]
+    },
+    {
+        "id": 4,
+        "title": "Rider in the Field",
+        "description": "a man sitting on a motorcycle in a field",
+        "category": "Photography",
+        "thumbnail": "https://lh3.googleusercontent.com/d/1Ry5eJf6QBIUac6Q0AzJvwtQmIJKfXCXN",
+        "mediaUrl": "https://lh3.googleusercontent.com/d/1Ry5eJf6QBIUac6Q0AzJvwtQmIJKfXCXN",
+        "tags": ["automotive", "portrait", "travel"]
+    },
+    {
+        "id": 5,
+        "title": "Motorcycle Portrait",
+        "description": "a man sitting on a motorcycle",
+        "category": "Photography",
+        "thumbnail": "https://lh3.googleusercontent.com/d/1uA86cfEDYa8cGe4ooKh0hfN9wrkfHPP1",
+        "mediaUrl": "https://lh3.googleusercontent.com/d/1uA86cfEDYa8cGe4ooKh0hfN9wrkfHPP1",
+        "tags": ["automotive", "portrait"]
+    },
+    {
+        "id": 6,
+        "title": "Fairground Fun",
+        "description": "a man in sunglasses standing next to a ferris",
+        "category": "Photography",
+        "thumbnail": "https://lh3.googleusercontent.com/d/1bo21jpwj-4_u5rsBooxy0B9WE3UFCXDp",
+        "mediaUrl": "https://lh3.googleusercontent.com/d/1bo21jpwj-4_u5rsBooxy0B9WE3UFCXDp",
+        "tags": ["portrait", "event"]
+    },
+    {
+        "id": 7,
+        "title": "Rider by the Tree",
+        "description": "a man sitting on a motorcycle next to a tree",
+        "category": "Photography",
+        "thumbnail": "https://lh3.googleusercontent.com/d/17fUwpVJTKzsPNSkld45Akr5CyWZfzy6G",
+        "mediaUrl": "https://lh3.googleusercontent.com/d/17fUwpVJTKzsPNSkld45Akr5CyWZfzy6G",
+        "tags": ["automotive", "portrait", "nature"]
+    }
+];
 
 export const services = [
   {
