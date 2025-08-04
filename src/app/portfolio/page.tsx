@@ -4,6 +4,7 @@ import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
 import { portfolioItems, PortfolioItem as PortfolioItemType } from '@/lib/data';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MediaLightbox from '@/components/MediaLightbox';
+import Image from 'next/image';
 
 export default function PortfolioPage() {
   const [filter, setFilter] = useState('All');
@@ -40,10 +41,10 @@ export default function PortfolioPage() {
         <BentoGrid className="mx-auto md:w-full" autoRows>
           {filteredItems.map((item, i) => (
             <BentoGridItem
-              key={i}
+              key={item.id}
               title={item.title}
               description={item.description}
-              header={<img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover"/>}
+              header={<Image src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" width={600} height={400}/>}
               className={i % 6 === 0 || i % 6 === 4 ? 'md:col-span-2' : ''}
               onClick={() => setSelectedItem(item)}
             />

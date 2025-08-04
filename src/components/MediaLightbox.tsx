@@ -2,6 +2,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import type { PortfolioItem } from '@/lib/data';
+import Image from 'next/image';
 
 interface MediaLightboxProps {
   item: PortfolioItem;
@@ -34,7 +35,7 @@ export default function MediaLightbox({ item, onClose }: MediaLightboxProps) {
               allowFullScreen
             ></iframe>
           ) : (
-            <img src={item.mediaUrl} alt={item.title} className="w-full h-full object-contain rounded-lg" />
+            <Image src={item.mediaUrl} alt={item.title} className="w-full h-full object-contain rounded-lg" width={1280} height={720} />
           )}
         </div>
       </DialogContent>

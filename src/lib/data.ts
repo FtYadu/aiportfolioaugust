@@ -5,6 +5,7 @@ import PinterestIcon from '@/components/icons/PinterestIcon';
 import SpotifyIcon from '@/components/icons/SpotifyIcon';
 import ThreadsIcon from '@/components/icons/ThreadsIcon';
 import TikTokIcon from '@/components/icons/TikTokIcon';
+import projectData from '@/../Yadu_Projects_Database.json';
 
 export interface PortfolioItem {
   id: number;
@@ -15,56 +16,15 @@ export interface PortfolioItem {
   mediaUrl: string;
 }
 
-export const portfolioItems: PortfolioItem[] = [
-  {
-    id: 1,
-    title: 'Neon Dystopia',
-    description: 'A series of AI-generated artworks exploring a futuristic cityscape drenched in neon lights.',
-    category: 'AI Art',
-    thumbnail: 'https://placehold.co/600x400.png',
-    mediaUrl: 'https://placehold.co/1280x720.png',
-  },
-  {
-    id: 2,
-    title: 'Corporate Headshots',
-    description: 'Professional and engaging headshots for a major tech firm.',
-    category: 'Photography',
-    thumbnail: 'https://placehold.co/600x400.png',
-    mediaUrl: 'https://placehold.co/1280x720.png',
-  },
-  {
-    id: 3,
-    title: 'Product Launch Video',
-    description: 'A high-energy promotional video for a new consumer electronic device.',
-    category: 'Videography',
-    thumbnail: 'https://placehold.co/600x400.png',
-    mediaUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  },
-  {
-    id: 4,
-    title: 'Urban Exploration',
-    description: 'Capturing the hidden beauty of cityscapes at dawn.',
-    category: 'Photography',
-    thumbnail: 'https://placehold.co/600x400.png',
-    mediaUrl: 'https://placehold.co/1280x720.png',
-  },
-  {
-    id: 5,
-    title: 'Surreal Landscapes',
-    description: 'AI-generated art depicting dreamlike and impossible natural vistas.',
-    category: 'AI Art',
-    thumbnail: 'https://placehold.co/600x400.png',
-    mediaUrl: 'https://placehold.co/1280x720.png',
-  },
-  {
-    id: 6,
-    title: 'Music Video: "Echoes"',
-    description: 'A narrative-driven music video for an indie artist.',
-    category: 'Videography',
-    thumbnail: 'https://placehold.co/600x400.png',
-    mediaUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  },
-];
+export const portfolioItems: PortfolioItem[] = projectData.map((item, index) => ({
+    id: index + 1,
+    title: item.Name,
+    description: item.Description,
+    category: item.Category as 'Photography' | 'Videography' | 'AI Art',
+    thumbnail: item['Cover Image'],
+    mediaUrl: item['Cover Image'],
+}));
+
 
 export const services = [
   {

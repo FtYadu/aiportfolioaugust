@@ -16,14 +16,14 @@ export default function CVPage() {
       <div className="w-full max-w-4xl p-4 md:p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
         <div className="aspect-[8.5/11] w-full">
           <iframe
-            src="/cv.pdf"
+            src="/Yadu Krishnan - Multimedia Specialist -01_12_2025-3.pdf"
             title="Yadu Krishnan CV"
             className="w-full h-full rounded-lg border-2 border-white/20"
           />
         </div>
       </div>
       
-      <a href="/cv.pdf" download="Yadu_Krishnan_CV.pdf" className="mt-8">
+      <a href="/Yadu Krishnan - Multimedia Specialist -01_12_2025-3.pdf" download="Yadu_Krishnan_CV.pdf" className="mt-8">
         <Button size="lg">
           <Download className="mr-2 h-5 w-5" />
           Download CV
