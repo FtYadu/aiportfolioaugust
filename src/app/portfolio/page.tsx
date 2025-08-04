@@ -1,3 +1,4 @@
+
 'use client';
 import React, { useState, useEffect, useMemo } from 'react';
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
@@ -18,6 +19,8 @@ export default function PortfolioPage() {
   const [filter, setFilter] = useState('All');
   const [selectedItem, setSelectedItem] = useState<PortfolioItemType | null>(null);
   const [items, setItems] = useState<PortfolioItemType[]>(portfolioItems);
+  const [taggingInProgress, setTaggingInProgress] = useState<Set<number>>(new Set());
+
 
   useEffect(() => {
     const processTags = async () => {
@@ -26,36 +29,48 @@ export default function PortfolioPage() {
       if (itemsToTag.length === 0) {
           return;
       }
-
-      let needsUpdate = false;
-      const BATCH_SIZE = 50;
-      const DELAY_BETWEEN_BATCHES = 1000;
+      
+      const BATCH_SIZE = 5;
+      const DELAY_BETWEEN_BATCHES = 5000;
 
       for (let i = 0; i < itemsToTag.length; i += BATCH_SIZE) {
         const batch = itemsToTag.slice(i, i + BATCH_SIZE);
+        
+        // Mark items as being tagged
+        setTaggingInProgress(prev => {
+            const newSet = new Set(prev);
+            batch.forEach(item => newSet.add(item.id));
+            return newSet;
+        });
+
         await Promise.all(batch.map(async (item) => {
             try {
                 const imageDataUri = await urlToDataUri(item.thumbnail);
                 const { tags } = await tagImage({ imageDataUri });
                 
                 setItems(currentItems => {
-                    const updatedItems = [...currentItems];
-                    const itemIndex = updatedItems.findIndex(p => p.id === item.id);
+                    const newItems = [...currentItems];
+                    const itemIndex = newItems.findIndex(p => p.id === item.id);
                     if (itemIndex !== -1) {
-                        updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags };
-                        needsUpdate = true;
+                        newItems[itemIndex] = { ...newItems[itemIndex], tags };
                     }
-                    return updatedItems;
+                    return newItems;
                 });
             } catch (error) {
                 console.error(`Failed to tag item ${item.id}:`, error);
-                 setItems(currentItems => {
-                    const updatedItems = [...currentItems];
-                    const itemIndex = updatedItems.findIndex(p => p.id === item.id);
+                setItems(currentItems => {
+                    const newItems = [...currentItems];
+                    const itemIndex = newItems.findIndex(p => p.id === item.id);
                     if (itemIndex !== -1) {
-                       updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags: [updatedItems[itemIndex].category] };
+                       newItems[itemIndex] = { ...newItems[itemIndex], tags: [newItems[itemIndex].category] };
                     }
-                    return updatedItems;
+                    return newItems;
+                });
+            } finally {
+                setTaggingInProgress(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(item.id);
+                    return newSet;
                 });
             }
         }));
@@ -64,19 +79,17 @@ export default function PortfolioPage() {
             await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
         }
       }
-
-      if (needsUpdate) {
-        // Since setItems is async, we grab the latest state to update the file
-        setItems(currentItems => {
-          updatePortfolioData(currentItems);
-          return currentItems;
-        });
-      }
     };
 
     processTags();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [items]);
+
+  useEffect(() => {
+    const hasUntaggedItems = items.some(item => !item.tags || item.tags.length === 0);
+    if (!hasUntaggedItems) {
+      updatePortfolioData(items);
+    }
+  }, [items]);
 
   const allFilteredItems = useMemo(() => {
     if (filter === 'All') return items;
@@ -117,12 +130,12 @@ export default function PortfolioPage() {
               title={item.title}
               description={item.description}
               header={
-                (!item.tags || item.tags.length === 0) ? (
+                taggingInProgress.has(item.id) ? (
                   <div className="w-full h-full flex items-center justify-center bg-card">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   </div>
                 ) : (
-                  <Image src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" width={600} height={400} data-ai-hint={item.description}/>
+                  <Image src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" width={600} height={400} data-ai-hint={item.description} />
                 )
               }
               className={i % 6 === 0 || i % 6 === 4 ? 'md:col-span-2' : ''}

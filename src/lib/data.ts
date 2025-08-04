@@ -14,7 +14,7 @@ export interface PortfolioItem {
   category: 'Photography' | 'Videography' | 'AI Art';
   thumbnail: string;
   mediaUrl: string;
-  tags?: string[];
+  tags: string[];
   Name: string;
   'Cover Image': string;
   Status: string;
@@ -25,7 +25,7 @@ export interface PortfolioItem {
 }
 
 // Type guard to ensure item structure
-function isProjectData(item: any): item is Omit<PortfolioItem, 'id' | 'tags' | 'thumbnail' | 'mediaUrl' | 'title' | 'description'> & { Name: string; Description: string; Category: string; 'Cover Image': string, tags?: string[] } {
+function isProjectData(item: any): item is Omit<PortfolioItem, 'id' | 'thumbnail' | 'mediaUrl' | 'title' | 'description' | 'tags'> & { Name: string; Description: string; Category: string; 'Cover Image': string, tags?: string[] } {
   return (
     typeof item === 'object' &&
     item !== null &&
@@ -43,6 +43,7 @@ export const portfolioItems: PortfolioItem[] = projectData.filter(isProjectData)
     category: item.Category as 'Photography' | 'Videography' | 'AI Art',
     thumbnail: item['Cover Image'],
     mediaUrl: item['Cover Image'],
+    tags: Array.isArray(item.tags) ? item.tags : [],
     Name: item.Name,
     'Cover Image': item['Cover Image'],
     Status: item.Status,
@@ -50,7 +51,6 @@ export const portfolioItems: PortfolioItem[] = projectData.filter(isProjectData)
     Budget: item.Budget,
     'Start Date': item['Start Date'],
     'End Date': item['End Date'],
-    tags: item.tags || [],
 }));
 
 
