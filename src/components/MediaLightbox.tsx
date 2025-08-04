@@ -10,7 +10,7 @@ interface MediaLightboxProps {
 }
 
 export default function MediaLightbox({ item, onClose }: MediaLightboxProps) {
-  const isVideo = item.mediaUrl.includes('youtube.com') || item.mediaUrl.includes('youtu.be');
+  const isVideo = item.category === 'Videography';
 
   return (
     <Dialog open={true} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -20,20 +20,16 @@ export default function MediaLightbox({ item, onClose }: MediaLightboxProps) {
           <DialogDescription className="text-neutral-300 pt-2">
             {item.description}
           </DialogDescription>
-          <div className="pt-2">
+          <div className="pt-2 flex flex-wrap gap-2">
             <Badge>{item.category}</Badge>
+            {item.tags?.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
           </div>
         </DialogHeader>
         <div className="mt-4 aspect-video w-full">
           {isVideo ? (
-            <iframe
-              className="w-full h-full rounded-lg"
-              src={item.mediaUrl.replace('watch?v=', 'embed/')}
-              title={item.title}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+            <div className="w-full h-full rounded-lg bg-black flex items-center justify-center text-neutral-400">
+              Video preview not available.
+            </div>
           ) : (
             <Image src={item.mediaUrl} alt={item.title} className="w-full h-full object-contain rounded-lg" width={1280} height={720} />
           )}

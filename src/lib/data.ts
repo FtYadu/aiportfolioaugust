@@ -14,6 +14,7 @@ export interface PortfolioItem {
   category: 'Photography' | 'Videography' | 'AI Art';
   thumbnail: string;
   mediaUrl: string;
+  tags?: string[];
 }
 
 export const portfolioItems: PortfolioItem[] = projectData.map((item, index) => ({
