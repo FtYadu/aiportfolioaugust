@@ -15,6 +15,13 @@ export interface PortfolioItem {
   thumbnail: string;
   mediaUrl: string;
   tags?: string[];
+  Name: string;
+  'Cover Image': string;
+  Status: string;
+  Client: string;
+  Budget: string;
+  'Start Date': string;
+  'End Date': string;
 }
 
 export const portfolioItems: PortfolioItem[] = projectData.map((item, index) => ({
@@ -24,6 +31,16 @@ export const portfolioItems: PortfolioItem[] = projectData.map((item, index) => 
     category: item.Category as 'Photography' | 'Videography' | 'AI Art',
     thumbnail: item['Cover Image'],
     mediaUrl: item['Cover Image'],
+    // Pass other fields from JSON
+    Name: item.Name,
+    'Cover Image': item['Cover Image'],
+    Status: item.Status,
+    Client: item.Client,
+    Budget: item.Budget,
+    'Start Date': item['Start Date'],
+    'End Date': item['End Date'],
+    // Include existing tags if they exist in the JSON
+    tags: (item as any).tags || [],
 }));
 
 
