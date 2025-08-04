@@ -9,8 +9,6 @@ import { Loader2 } from 'lucide-react';
 import { tagImage } from '@/ai/flows/tag-image';
 import { urlToDataUri } from '@/lib/server-utils';
 
-const ITEMS_PER_PAGE = 12;
-
 export default function PortfolioPage() {
   const [filter, setFilter] = useState('All');
   const [selectedItem, setSelectedItem] = useState<PortfolioItemType | null>(null);
@@ -18,22 +16,21 @@ export default function PortfolioPage() {
   const [taggingInProgress, setTaggingInProgress] = useState(true);
 
   useEffect(() => {
+    setTaggingInProgress(true);
+    setTaggedItems([]);
+
     const processTags = async () => {
-      setTaggingInProgress(true);
-      const itemsWithTags = await Promise.all(
-        portfolioItems.map(async (item) => {
-          try {
-            const imageDataUri = await urlToDataUri(item.thumbnail);
-            const { tags } = await tagImage({ imageDataUri });
-            return { ...item, tags };
-          } catch (error) {
-            console.error(`Failed to tag item ${item.id}:`, error);
-            // Fallback to category if tagging fails
-            return { ...item, tags: [item.category] };
-          }
-        })
-      );
-      setTaggedItems(itemsWithTags);
+      for (const item of portfolioItems) {
+        try {
+          const imageDataUri = await urlToDataUri(item.thumbnail);
+          const { tags } = await tagImage({ imageDataUri });
+          setTaggedItems(prevItems => [...prevItems, { ...item, tags }]);
+        } catch (error) {
+          console.error(`Failed to tag item ${item.id}:`, error);
+          // Fallback to category if tagging fails
+          setTaggedItems(prevItems => [...prevItems, { ...item, tags: [item.category] }]);
+        }
+      }
       setTaggingInProgress(false);
     };
 
@@ -41,62 +38,18 @@ export default function PortfolioPage() {
   }, []);
 
   const allFilteredItems = useMemo(() => {
-    if (taggingInProgress) return [];
     if (filter === 'All') return taggedItems;
     if (filter === 'Photography' || filter === 'Videography') {
       return taggedItems.filter(item => item.category === filter);
     }
     return taggedItems.filter(item => item.tags?.includes(filter));
-  }, [filter, taggedItems, taggingInProgress]);
-
-  const [displayedItems, setDisplayedItems] = useState<PortfolioItemType[]>([]);
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  }, [filter, taggedItems]);
 
   const allTags = useMemo(() => {
-    if (taggingInProgress) return [];
     const baseCategories = ['All', 'Photography', 'Videography'];
     const dynamicTags = new Set(taggedItems.flatMap(item => item.tags || []));
     return [...baseCategories, ...Array.from(dynamicTags).filter(t => !baseCategories.includes(t))];
-  }, [taggedItems, taggingInProgress]);
-
-
-  const loadMoreItems = useCallback(() => {
-    if (isLoading || !hasMore) return;
-
-    setIsLoading(true);
-    setTimeout(() => {
-      const newItems = allFilteredItems.slice(0, page * ITEMS_PER_PAGE);
-      
-      setDisplayedItems(newItems);
-      setPage(prev => prev + 1);
-      if (newItems.length >= allFilteredItems.length) {
-        setHasMore(false);
-      }
-      setIsLoading(false);
-    }, 500);
-  }, [page, isLoading, hasMore, allFilteredItems]);
-  
-  useEffect(() => {
-    setPage(1);
-    const initialItems = allFilteredItems.slice(0, ITEMS_PER_PAGE);
-    setDisplayedItems(initialItems);
-    setHasMore(initialItems.length < allFilteredItems.length);
-    setPage(2);
-  }, [filter, allFilteredItems]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop < document.documentElement.offsetHeight - 200 || isLoading) {
-        return;
-      }
-      loadMoreItems();
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isLoading, loadMoreItems]);
+  }, [taggedItems]);
 
   return (
     <>
@@ -111,24 +64,17 @@ export default function PortfolioPage() {
         </div>
         
         <div className="flex justify-center mb-8">
-            {taggingInProgress ? (
-                <div className="flex items-center gap-2 text-neutral-400">
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    <span>Analyzing & Tagging Portfolio...</span>
-                </div>
-            ) : (
-                <Tabs value={filter} onValueChange={setFilter}>
-                  <TabsList className="flex-wrap h-auto">
-                    {allTags.map(category => (
-                      <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
-                    ))}
-                  </TabsList>
-                </Tabs>
-            )}
+            <Tabs value={filter} onValueChange={setFilter}>
+              <TabsList className="flex-wrap h-auto">
+                {allTags.map(category => (
+                  <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
         </div>
 
         <BentoGrid className="mx-auto md:w-full" autoRows>
-          {displayedItems.map((item, i) => (
+          {allFilteredItems.map((item, i) => (
             <BentoGridItem
               key={`${item.id}-${i}`}
               title={item.title}
@@ -140,9 +86,10 @@ export default function PortfolioPage() {
           ))}
         </BentoGrid>
         
-        {isLoading && (
+        {taggingInProgress && (
           <div className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+            <p className="text-neutral-400 mt-2">Analyzing and loading portfolio...</p>
           </div>
         )}
       </main>
