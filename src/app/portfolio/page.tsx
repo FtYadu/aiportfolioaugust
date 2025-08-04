@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
 import { portfolioItems, PortfolioItem as PortfolioItemType } from '@/lib/data';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,6 +9,8 @@ import { Loader2 } from 'lucide-react';
 import { tagImage } from '@/ai/flows/tag-image';
 import { urlToDataUri } from '@/lib/server-utils';
 
+const GENERAL_CATEGORIES = ['All', 'Photography', 'Videography', 'Portraits', 'Architecture', 'F&B', 'Industrial', 'Travel', 'Cinematic'];
+
 export default function PortfolioPage() {
   const [filter, setFilter] = useState('All');
   const [selectedItem, setSelectedItem] = useState<PortfolioItemType | null>(null);
@@ -16,25 +18,29 @@ export default function PortfolioPage() {
   const [taggingInProgress, setTaggingInProgress] = useState(true);
 
   useEffect(() => {
-    setTaggingInProgress(true);
-    setTaggedItems([]);
-
-    const processTags = async () => {
-      for (const item of portfolioItems) {
-        try {
-          const imageDataUri = await urlToDataUri(item.thumbnail);
-          const { tags } = await tagImage({ imageDataUri });
-          setTaggedItems(prevItems => [...prevItems, { ...item, tags }]);
-        } catch (error) {
-          console.error(`Failed to tag item ${item.id}:`, error);
-          // Fallback to category if tagging fails
-          setTaggedItems(prevItems => [...prevItems, { ...item, tags: [item.category] }]);
-        }
+    const processItem = async (item: PortfolioItemType) => {
+      try {
+        const imageDataUri = await urlToDataUri(item.thumbnail);
+        const { tags } = await tagImage({ imageDataUri });
+        const newItem = { ...item, tags };
+        setTaggedItems(prevItems => [...prevItems, newItem]);
+      } catch (error) {
+        console.error(`Failed to tag item ${item.id}:`, error);
+        // Fallback to category if tagging fails
+        const newItem = { ...item, tags: [item.category] };
+        setTaggedItems(prevItems => [...prevItems, newItem]);
       }
-      setTaggingInProgress(false);
     };
-
-    processTags();
+    
+    const processAllItems = async () => {
+        setTaggingInProgress(true);
+        for (const item of portfolioItems) {
+            await processItem(item);
+        }
+        setTaggingInProgress(false);
+    }
+    
+    processAllItems();
   }, []);
 
   const allFilteredItems = useMemo(() => {
@@ -42,14 +48,11 @@ export default function PortfolioPage() {
     if (filter === 'Photography' || filter === 'Videography') {
       return taggedItems.filter(item => item.category === filter);
     }
-    return taggedItems.filter(item => item.tags?.includes(filter));
+    // For other general categories, check if any of the item's tags match (case-insensitive)
+    return taggedItems.filter(item => 
+      item.tags?.some(tag => tag.toLowerCase().includes(filter.toLowerCase()))
+    );
   }, [filter, taggedItems]);
-
-  const allTags = useMemo(() => {
-    const baseCategories = ['All', 'Photography', 'Videography'];
-    const dynamicTags = new Set(taggedItems.flatMap(item => item.tags || []));
-    return [...baseCategories, ...Array.from(dynamicTags).filter(t => !baseCategories.includes(t))];
-  }, [taggedItems]);
 
   return (
     <>
@@ -66,7 +69,7 @@ export default function PortfolioPage() {
         <div className="flex justify-center mb-8">
             <Tabs value={filter} onValueChange={setFilter}>
               <TabsList className="flex-wrap h-auto">
-                {allTags.map(category => (
+                {GENERAL_CATEGORIES.map(category => (
                   <TabsTrigger key={category} value={category}>{category}</TabsTrigger>
                 ))}
               </TabsList>
@@ -79,17 +82,17 @@ export default function PortfolioPage() {
               key={`${item.id}-${i}`}
               title={item.title}
               description={item.description}
-              header={<Image src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" width={600} height={400}/>}
+              header={<Image src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" width={600} height={400} data-ai-hint={item.description}/>}
               className={i % 6 === 0 || i % 6 === 4 ? 'md:col-span-2' : ''}
               onClick={() => setSelectedItem(item)}
             />
           ))}
         </BentoGrid>
         
-        {taggingInProgress && (
+        {taggingInProgress && taggedItems.length < portfolioItems.length && (
           <div className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-            <p className="text-neutral-400 mt-2">Analyzing and loading portfolio...</p>
+            <p className="text-neutral-400 mt-2">Analyzing and loading portfolio ({taggedItems.length}/{portfolioItems.length})...</p>
           </div>
         )}
       </main>
