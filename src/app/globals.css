@@ -23,7 +23,6 @@
     --border: 278 40% 12%;
     --input: 278 40% 12%;
     --ring: 276 87% 53%;
-    --radius: 0.5rem;
   }
 
   .dark {
@@ -57,6 +56,12 @@
     @apply bg-background text-foreground;
     background-color: hsl(var(--background));
     background-image: radial-gradient(ellipse 80% 80% at 50% -20%,rgba(120,119,198,0.3), hsla(0,0%,100%,0));
+  }
+  .prose {
+    @apply text-foreground;
+  }
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    @apply text-primary;
   }
 }
 
