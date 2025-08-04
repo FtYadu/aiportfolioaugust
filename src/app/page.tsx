@@ -1,3 +1,4 @@
+
 'use client';
 import React from 'react';
 import Link from 'next/link';
@@ -35,7 +36,7 @@ export default function Home() {
     {
       title: "Yadu Krishnan",
       description: cvData?.bio || "",
-      header: <div className="flex h-full w-full items-center justify-center bg-grid-white/[0.05]"><Image src="https://placehold.co/400x400.png" alt="Yadu Krishnan" width={150} height={150} className="rounded-full border-2 border-primary" data-ai-hint="portrait man" /></div>,
+      header: <div className="flex h-full w-full items-center justify-center bg-grid-white/[0.05]"><Image src="https://scanned.page/p/Jdq5Gx" alt="Yadu Krishnan" width={150} height={150} className="rounded-full border-2 border-primary" data-ai-hint="portrait man" /></div>,
       className: "md:col-span-2",
     },
     {
