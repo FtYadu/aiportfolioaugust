@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, ArrowRight } from "lucide-react";
+import Link from 'next/link';
 
 export default function CVPage() {
   return (
-    <main className="container mx-auto px-4 py-24 min-h-screen flex flex-col items-center justify-center">
+    <main className="container mx-auto px-4 py-24 min-h-screen flex flex-col items-center">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-6xl font-bold font-headline bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
           Curriculum Vitae
@@ -29,6 +30,16 @@ export default function CVPage() {
           Download CV
         </Button>
       </a>
+
+      <div className="text-center mt-16">
+        <h2 className="text-3xl font-bold font-headline mb-4">Ready to take the next step?</h2>
+        <p className="text-neutral-300 mb-8 max-w-2xl mx-auto">If my qualifications align with your needs, I would be delighted to discuss potential opportunities.</p>
+        <Button asChild size="lg">
+            <Link href="/contact">
+                Contact Me <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+        </Button>
+      </div>
     </main>
   );
 }

@@ -1,9 +1,10 @@
 'use client';
 import React, { useState, useTransition } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Wand2 } from 'lucide-react';
+import { Loader2, Wand2, ArrowRight } from 'lucide-react';
 import { generateBlogPost, GenerateBlogPostOutput } from '@/ai/flows/generate-blog-post';
 
 export default function BlogPage() {
@@ -65,7 +66,24 @@ export default function BlogPage() {
               <Badge key={tag} variant="secondary">{tag}</Badge>
             ))}
           </div>
-          <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: generatedPost.content.replace(/\n/g, '<br />') }} />
+          <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: generatedPost.content.replace(/\\n/g, '<br />') }} />
+
+          <div className="text-center mt-12 pt-8 border-t border-border">
+            <h3 className="text-2xl font-bold font-headline mb-4">Inspired?</h3>
+            <p className="text-neutral-300 mb-8 max-w-2xl mx-auto">Explore more of my work or get in touch to discuss your own project.</p>
+            <div className="flex justify-center gap-4">
+              <Button asChild>
+                  <Link href="/portfolio">
+                      View Portfolio <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+              </Button>
+              <Button asChild variant="outline">
+                  <Link href="/contact">
+                      Contact Me
+                  </Link>
+              </Button>
+            </div>
+          </div>
         </article>
       )}
     </main>

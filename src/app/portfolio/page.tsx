@@ -5,10 +5,12 @@ import { portfolioItems, PortfolioItem as PortfolioItemType } from '@/lib/data';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MediaLightbox from '@/components/MediaLightbox';
 import Image from 'next/image';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 import { tagImage } from '@/ai/flows/tag-image';
 import { urlToDataUri } from '@/lib/server-utils';
 import { updatePortfolioData } from '@/lib/portfolio-actions';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const GENERAL_CATEGORIES = ['All', 'Photography', 'Videography', 'Portraits', 'Architecture', 'F&B', 'Industrial', 'Travel', 'Cinematic'];
 
@@ -33,34 +35,43 @@ export default function PortfolioPage() {
       }
 
       let needsUpdate = false;
+      const BATCH_SIZE = 50;
+      const DELAY_BETWEEN_BATCHES = 1000;
 
-      for (const item of itemsToTag) {
-        try {
-            const imageDataUri = await urlToDataUri(item.thumbnail);
-            const { tags } = await tagImage({ imageDataUri });
-            
-            setItems(currentItems => {
-                const updatedItems = [...currentItems];
-                const itemIndex = updatedItems.findIndex(p => p.id === item.id);
-                if (itemIndex !== -1) {
-                    updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags };
-                    needsUpdate = true;
-                }
-                return updatedItems;
-            });
-        } catch (error) {
-            console.error(`Failed to tag item ${item.id}:`, error);
-             setItems(currentItems => {
-                const updatedItems = [...currentItems];
-                const itemIndex = updatedItems.findIndex(p => p.id === item.id);
-                if (itemIndex !== -1) {
-                   updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags: [updatedItems[itemIndex].category] };
-                }
-                return updatedItems;
-            });
+      for (let i = 0; i < itemsToTag.length; i += BATCH_SIZE) {
+        const batch = itemsToTag.slice(i, i + BATCH_SIZE);
+        await Promise.all(batch.map(async (item) => {
+            try {
+                const imageDataUri = await urlToDataUri(item.thumbnail);
+                const { tags } = await tagImage({ imageDataUri });
+                
+                setItems(currentItems => {
+                    const updatedItems = [...currentItems];
+                    const itemIndex = updatedItems.findIndex(p => p.id === item.id);
+                    if (itemIndex !== -1) {
+                        updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags };
+                        needsUpdate = true;
+                    }
+                    return updatedItems;
+                });
+            } catch (error) {
+                console.error(`Failed to tag item ${item.id}:`, error);
+                 setItems(currentItems => {
+                    const updatedItems = [...currentItems];
+                    const itemIndex = updatedItems.findIndex(p => p.id === item.id);
+                    if (itemIndex !== -1) {
+                       updatedItems[itemIndex] = { ...updatedItems[itemIndex], tags: [updatedItems[itemIndex].category] };
+                    }
+                    return updatedItems;
+                });
+            }
+            taggedCount++;
+            setProgress((taggedCount / totalToTag) * 100);
+        }));
+
+        if (i + BATCH_SIZE < itemsToTag.length) {
+            await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_BATCHES));
         }
-        taggedCount++;
-        setProgress((taggedCount / totalToTag) * 100);
       }
 
       if (needsUpdate) {
@@ -127,6 +138,18 @@ export default function PortfolioPage() {
           <div className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
             <p className="text-neutral-400 mt-2">Analyzing and loading portfolio ({Math.round(progress)}%)...</p>
+          </div>
+        )}
+
+        {!taggingInProgress && allFilteredItems.length > 0 && (
+          <div className="text-center mt-20">
+            <h2 className="text-3xl font-bold font-headline mb-4">Like what you see?</h2>
+            <p className="text-neutral-300 mb-8 max-w-2xl mx-auto">Let's work together to bring your vision to life. I'm ready to discuss your project.</p>
+            <Button asChild size="lg">
+                <Link href="/contact">
+                    Get In Touch <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+            </Button>
           </div>
         )}
       </main>
