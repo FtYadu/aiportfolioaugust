@@ -28,17 +28,19 @@ export default function FloatingNav({ navItems }: { navItems: NavItem[] }) {
           {navItems.map((item) => {
             const isActive = pathname === item.link;
             return (
-              <Link key={item.link} href={item.link} passHref legacyBehavior>
-                <a className="flex flex-col items-center justify-center text-white transition-colors hover:text-primary h-full w-full relative">
-                  <motion.div
-                    className={cn("p-2 rounded-full transition-all duration-300", isActive ? 'bg-primary/20' : 'bg-transparent')}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    {item.icon}
-                  </motion.div>
-                  <span className={cn("text-xs mt-1", isActive ? 'text-primary' : 'text-neutral-400')}>{item.name}</span>
-                </a>
+              <Link 
+                key={item.link} 
+                href={item.link} 
+                className="flex flex-col items-center justify-center text-white transition-colors hover:text-primary h-full w-full relative"
+              >
+                <motion.div
+                  className={cn("p-2 rounded-full transition-all duration-300", isActive ? 'bg-primary/20' : 'bg-transparent')}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  {item.icon}
+                </motion.div>
+                <span className={cn("text-xs mt-1", isActive ? 'text-primary' : 'text-neutral-400')}>{item.name}</span>
               </Link>
             );
           })}
